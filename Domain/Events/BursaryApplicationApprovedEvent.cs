@@ -4,9 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.ValueObjects
+namespace Domain.Events
 {
-    internal class BursaryStatus
-    {
-    }
+    public record BursaryApplicationApprovedEvent(string ApplicationID) : IDomainEvent;
 }
