@@ -2,11 +2,6 @@
 using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Data.Configurations
 {
@@ -21,24 +16,21 @@ namespace Domain.Data.Configurations
             builder.Property(b => b.ApplicantPhoneNumber)
                 .IsRequired();
 
-            builder.Property(b => b.AmountAppliedFor)
+            //builder.OwnsOne(b => b.AmountAppliedFor, money =>
+            //{
+            //    money.Property(m => m.Amount)
+            //        .HasColumnName("AmountAppliedFor")
+            //        .HasPrecision(18, 2)
+            //        .IsRequired();
 
-                .HasConversion(
-
-                    amount => amount.Amount, 
-
-                    value => new Money(value, "KES") 
-                )
-
-                .IsRequired();
+            //    money.Property(m => m.Currency)
+            //        .HasColumnName("Currency")
+            //        .IsRequired();
+            //});
 
             builder.Property(b => b.ApplicationDate)
-
                 .IsRequired();
 
-    
-
-            
             builder.HasIndex(b => b.ApplicationId);
         }
     }

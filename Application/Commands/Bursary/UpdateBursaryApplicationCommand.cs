@@ -38,7 +38,9 @@ namespace Application.Commands.Bursary
 
         string ? ApplicationStatus,
 
-        string ? County
+        string ? County,
+
+        string ? BatchNumber
 
     ):IRequest<bool>;
 }

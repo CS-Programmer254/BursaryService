@@ -14,9 +14,9 @@ namespace Application.Handlers.QueryHandlers.Bursary
 {
     public class GetAllBursaryApplicationsQueryHandler : IRequestHandler<GetAllBursaryApplicationsQuery, IEnumerable<GetBursaryApplicationResponseDto?>>
     {
-        private readonly IBursaryService _bursaryService;
+        private readonly IBursaryApplicationService _bursaryService;
 
-        public GetAllBursaryApplicationsQueryHandler(IBursaryService bursaryService)
+        public GetAllBursaryApplicationsQueryHandler(IBursaryApplicationService bursaryService)
         {
             _bursaryService = bursaryService ?? throw new ArgumentNullException(nameof(bursaryService));
         }
@@ -27,7 +27,11 @@ namespace Application.Handlers.QueryHandlers.Bursary
 
             return applications.Select(a => new GetBursaryApplicationResponseDto
             {
+                BursaryApplicationId = a.ApplicationId,
+                BatchNumber = a.BatchNumber,
                 ApplicantFullName = a.ApplicantFullName,
+                ApplicantPhoneNumber = a.ApplicantPhoneNumber,
+                ApplicantEmail = a.EmailAddress,
                 AdmissionNumber = a.AdmissionNumber,
                 SchoolName = a.SchoolName,
                 DepartmentName = a.DepartmentName,
@@ -35,7 +39,12 @@ namespace Application.Handlers.QueryHandlers.Bursary
                 YearOfStudy = a.YearOfStudy,
                 ApplicationStatus = a.ApplicationStatus,
                 ApplicationDate = a.ApplicationDate,
-                AmountAppliedFor = a.AmountAppliedFor
+                AmountAppliedFor = a.AmountAppliedFor,
+                NationalIdentificationNumber = a.NationalIdentificationNumber,
+                PreviousAcademicYearGrade = a.PreviousAcademicYearGrade,
+                SponsorshipType = a.SponsorshipType,
+                AnyFormOfDisability = a.AnyFormOfDisability,
+                County = a.County
             }).ToList();
         }
     }

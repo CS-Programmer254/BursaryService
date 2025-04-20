@@ -37,5 +37,7 @@ namespace Domain.Events
 
         Money AmountAppliedFor,
 
-        string County);
+        string County,
+        
+        string BatchNumber );
 }

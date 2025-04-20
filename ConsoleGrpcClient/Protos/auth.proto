@@ -1,9 +1,10 @@
 ﻿
 syntax = "proto3";
 
-package Infrastructure.protos;
+option csharp_namespace = "ConsoleGrpcClient.Protos";
+package Auth;
 
-service AuthGrpc {
+service AuthService {
 
     rpc GetUser (UserRequest) returns (UserResponse);
 
@@ -45,4 +46,6 @@ message UserResponse {
  
     string County=13; 
 }
+
+
 

@@ -14,9 +14,9 @@ namespace Application.Handlers.QueryHandlers.Bursary
 {
     public class GetBursaryApplicationByIdQueryHandler : IRequestHandler<GetBursaryApplicationByIdQuery, GetBursaryApplicationResponseDto?>
     {
-        private readonly IBursaryService _bursaryService;
+        private readonly IBursaryApplicationService _bursaryService;
 
-        public GetBursaryApplicationByIdQueryHandler(IBursaryService bursaryService)
+        public GetBursaryApplicationByIdQueryHandler(IBursaryApplicationService bursaryService)
         {
             _bursaryService = bursaryService ?? throw new ArgumentNullException(nameof(bursaryService));
         }
@@ -31,7 +31,11 @@ namespace Application.Handlers.QueryHandlers.Bursary
 
             return new GetBursaryApplicationResponseDto
             {
+                BursaryApplicationId = application.ApplicationId,
+                BatchNumber = application.BatchNumber,
                 ApplicantFullName = application.ApplicantFullName,
+                ApplicantPhoneNumber = application.ApplicantPhoneNumber,
+                ApplicantEmail = application.EmailAddress,
                 AdmissionNumber = application.AdmissionNumber,
                 SchoolName = application.SchoolName,
                 DepartmentName = application.DepartmentName,
@@ -39,7 +43,12 @@ namespace Application.Handlers.QueryHandlers.Bursary
                 YearOfStudy = application.YearOfStudy,
                 ApplicationStatus = application.ApplicationStatus,
                 ApplicationDate = application.ApplicationDate,
-                AmountAppliedFor = application.AmountAppliedFor
+                AmountAppliedFor = application.AmountAppliedFor,
+                NationalIdentificationNumber = application.NationalIdentificationNumber,
+                PreviousAcademicYearGrade = application.PreviousAcademicYearGrade,
+                SponsorshipType = application.SponsorshipType,
+                AnyFormOfDisability = application.AnyFormOfDisability,
+                County = application.County
             };
         }
     }

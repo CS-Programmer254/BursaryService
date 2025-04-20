@@ -1,12 +1,7 @@
 ﻿using Domain.Aggregates;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Domain.ValueObjects;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Domain.Data.Configurations
 {
@@ -14,24 +9,27 @@ namespace Domain.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<FeeBalance> builder)
         {
-            builder.ToTable("FeeBalances"); 
+            builder.ToTable("FeeBalances");
 
-            builder.HasKey(f => f.Id); 
+            builder.HasKey(f => f.Id);
 
             builder.Property(f => f.AdmissionNumber)
                 .IsRequired()
                 .HasMaxLength(20);
 
-            builder.Property(f => f.CurrentBalance)
-                .IsRequired()
-                .HasConversion(
-                    balance => balance.Amount, 
+            builder.OwnsOne(f => f.CurrentBalance, money =>
+            {
+                money.Property(m => m.Amount)
+                    .HasColumnName("CurrentBalance")
+                    .HasPrecision(18, 2)
+                    .IsRequired();
 
-                    value => new Money(value, "KES")
-                )
-                .IsRequired();
+                money.Property(m => m.Currency)
+                    .HasColumnName("Currency")
+                    .IsRequired();
+            });
 
-            builder.HasIndex(f => f.AdmissionNumber); 
+            builder.HasIndex(f => f.AdmissionNumber);
         }
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Application.services
 {
-    public interface IBursaryService
+    public interface IBursaryApplicationService
     {
        Task<bool>SaveBursaryApplicationAsync(Guid id,CreateBursaryApplicationCommand bursaryApplicationCommand);
 
@@ -16,9 +16,13 @@ namespace Application.services
 
        Task<BursaryApplication?>GetBursaryApplicationByIdAsync(Guid applicationId);
 
-       Task<BursaryApplication?> GetBursaryApplicationByPhoneNumberAsync(string phoneNUmber);
+       Task<IEnumerable<BursaryApplication?>> GetBursaryApplicationsByPhoneNumberAsync(string phoneNumber);
+
+       Task<IEnumerable<BursaryApplication>>GetBursaryApplicationsByApplicationStatusAsync(string applicationStatus);
 
        Task<bool>UpdateBursaryApplicationByIdAsync(Guid id,UpdateBursaryApplicationCommand updatedBursaryApplicationCommand);
+       
+       Task<bool> ApproveOrRejectBursaryApplicationAsync(ApproveRejectBursaryCommand approveBursaryCommand);
 
     }
 }

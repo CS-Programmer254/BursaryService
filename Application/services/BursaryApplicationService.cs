@@ -13,11 +13,12 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Application.Services
 {
-    public class BursaryService : IBursaryService
+    public class BursaryApplicationService : IBursaryApplicationService
     {
         private readonly IBursaryRepository _bursaryRepository;
 
-        public BursaryService(IBursaryRepository bursaryRepository)
+     
+        public BursaryApplicationService(IBursaryRepository bursaryRepository)
         {
             _bursaryRepository = bursaryRepository ?? throw new ArgumentNullException(nameof(bursaryRepository));
         }
@@ -84,8 +85,11 @@ namespace Application.Services
 
               createBursaryApplicationCommand.AmountAppliedFor,
 
-              createBursaryApplicationCommand.County
-              
+              createBursaryApplicationCommand.County,
+
+              "Not Assigned"// Default value for BatchNumber
+
+
               );
 
             await _bursaryRepository.SaveBursaryApplicationAsync(bursaryApplication);
@@ -103,11 +107,14 @@ namespace Application.Services
             return await _bursaryRepository.GetBursaryApplicationByIdAsync(applicationId);
         }
 
-        public async Task<BursaryApplication?> GetBursaryApplicationByPhoneNumberAsync(string phoneNumber)
+        public async Task<IEnumerable<BursaryApplication?>> GetBursaryApplicationsByPhoneNumberAsync(string phoneNumber)
         {
-            var applications = await _bursaryRepository.GetByPhoneNumberAsync(phoneNumber);
-
-            return applications.FirstOrDefault();
+            return await _bursaryRepository.GetByPhoneNumberAsync(phoneNumber);
+        }
+       
+        public async Task<IEnumerable<BursaryApplication>> GetBursaryApplicationsByApplicationStatusAsync(string applicationStatus)
+        {
+            return await _bursaryRepository.GetAllBursaryApplicationsByStatusAsync(applicationStatus);
         }
 
         public async Task<bool> UpdateBursaryApplicationByIdAsync(Guid id, UpdateBursaryApplicationCommand updateBursaryApplicationCommand)
@@ -116,11 +123,7 @@ namespace Application.Services
 
                 throw new ArgumentNullException(nameof(updateBursaryApplicationCommand));
 
-            var existingApplication = await _bursaryRepository.GetBursaryApplicationByIdAsync(id);
-
-            if (existingApplication == null)
-
-                throw new KeyNotFoundException("Bursary application not found.");
+            var existingApplication = await ValidateAndGetBursaryApplicationAsync(id);
 
             var updatedApplication = new BursaryApplication(
 
@@ -156,9 +159,12 @@ namespace Application.Services
 
                 existingApplication.AmountAppliedFor,
 
-                string.IsNullOrEmpty(updateBursaryApplicationCommand.County) ? existingApplication.County : updateBursaryApplicationCommand.County
+                string.IsNullOrEmpty(updateBursaryApplicationCommand.County) ? existingApplication.County : updateBursaryApplicationCommand.County,
+
+                string.IsNullOrEmpty(updateBursaryApplicationCommand.BatchNumber) ? existingApplication.BatchNumber : updateBursaryApplicationCommand.BatchNumber
 
             );
+
 
           
             await _bursaryRepository.UpdateBursaryApplicationAsync(updatedApplication);
@@ -166,9 +172,77 @@ namespace Application.Services
             return true;
         }
 
-        public Task<IEnumerable<BursaryApplication?>> GetAllBursaryApplicationAsync()
+        public async Task<bool> ApproveOrRejectBursaryApplicationAsync(ApproveRejectBursaryCommand approveBursaryCommand)
         {
-            throw new NotImplementedException();
+            if (approveBursaryCommand == null)
+
+                throw new ArgumentNullException(nameof(approveBursaryCommand));
+
+            var existingApplication = await ValidateAndGetBursaryApplicationAsync(approveBursaryCommand.BursaryApplicationId);
+
+            if (approveBursaryCommand.ApprovalStatus == "Approved" && existingApplication.ApplicationStatus == "Approved")
+            {
+                throw new InvalidOperationException($"Bursary application with ID {approveBursaryCommand.BursaryApplicationId} is already approved.");
+            }else if (approveBursaryCommand.ApprovalStatus == "Approved" && existingApplication.ApplicationStatus == "Rejected")
+            {
+                throw new InvalidOperationException($"Bursary application with ID {approveBursaryCommand.BursaryApplicationId} is already rejected thus cannot be approved.");
+            }
+            else if (approveBursaryCommand.ApprovalStatus == "Rejected" && existingApplication.ApplicationStatus == "Approved")
+            {
+                throw new InvalidOperationException($"Bursary application with ID {approveBursaryCommand.BursaryApplicationId} is already approved thus cannot be rejected.");
+            }
+            else if (approveBursaryCommand.ApprovalStatus == "Rejected" && existingApplication.ApplicationStatus == "Rejected")
+            {
+                throw new InvalidOperationException($"Bursary application with ID {approveBursaryCommand.BursaryApplicationId} is already rejected.");
+            }
+            
+            var updateBursaryCommand = new UpdateBursaryApplicationCommand(
+                
+                existingApplication.ApplicationId,
+
+                existingApplication.ApplicantFullName,
+
+                existingApplication.ApplicantPhoneNumber,
+
+                existingApplication.EmailAddress,
+
+                existingApplication.AdmissionNumber,
+
+                existingApplication.NationalIdentificationNumber,
+
+                existingApplication.SchoolName,
+
+                existingApplication.DepartmentName,
+
+                existingApplication.EnrolledCourse,
+
+                existingApplication.YearOfStudy,
+
+                existingApplication.PreviousAcademicYearGrade,
+
+                existingApplication.SponsorshipType,
+
+                existingApplication.AnyFormOfDisability,
+
+                (approveBursaryCommand.ApprovalStatus=="Approved") ? "Approved":"Rejected",
+
+                existingApplication.County,
+
+                approveBursaryCommand.AssignedBatchNumber
+
+            );
+            return await UpdateBursaryApplicationByIdAsync(approveBursaryCommand.BursaryApplicationId, updateBursaryCommand);
+        }
+
+
+        private async Task<BursaryApplication> ValidateAndGetBursaryApplicationAsync(Guid applicationId)
+        {
+            var existingApplication = await _bursaryRepository.GetBursaryApplicationByIdAsync(applicationId);
+
+            if (existingApplication == null)
+                throw new KeyNotFoundException("Bursary application not found.");
+
+            return existingApplication;
         }
     }
 }

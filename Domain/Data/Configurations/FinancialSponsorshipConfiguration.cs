@@ -1,12 +1,7 @@
 ﻿using Domain.Aggregates;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Domain.ValueObjects;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Domain.Data.Configurations
 {
@@ -14,28 +9,33 @@ namespace Domain.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<FinancialSponsorship> builder)
         {
-            builder.ToTable("FinancialSponsorships"); 
+            builder.ToTable("FinancialSponsorships");
 
             builder.HasKey(f => f.FinancialSponsorshipEntryId);
 
             builder.Property(f => f.AwardingOrganization)
                 .IsRequired()
-                .HasMaxLength(255); 
+                .HasMaxLength(255);
 
             builder.Property(f => f.SponsorshipType)
                 .IsRequired()
                 .HasMaxLength(100);
 
-            builder.Property(f => f.AmountFunded)
-                .HasConversion(
-                    amount => amount.Amount,
-                    value => new Money(value, "KES")
-                )
-                .IsRequired();
+            builder.OwnsOne(f => f.AmountFunded, money =>
+            {
+                money.Property(m => m.Amount)
+                    .HasColumnName("AmountFunded")
+                    .HasPrecision(18, 2)
+                    .IsRequired();
+
+                money.Property(m => m.Currency)
+                    .HasColumnName("Currency")
+                    .IsRequired();
+            });
 
             builder.Property(f => f.AdmissionNumber)
                 .IsRequired()
-                .HasMaxLength(20); 
+                .HasMaxLength(20);
 
             builder.HasIndex(f => f.AdmissionNumber);
         }

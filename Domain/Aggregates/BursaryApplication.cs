@@ -49,9 +49,11 @@ namespace Domain.Aggregates
 
         public string BatchNumber { get; private set; } = "Not Yet Assigned ";
 
+        public virtual BursaryApproval BursaryApproval { get; private set; }
+
         public BursaryApplication() { }
 
-        public BursaryApplication(Guid applicationId, string applicantFullName, string applicantPhoneNumber, string emailAddress, string admissionNumber, string nationalIdentificationNumber, string schoolName, string departmentName, string enrolledCourse, string yearOfStudy, string previousAcademicYearGrade, string sponsorshipType, string anyFormOfDisability, string applicationStatus, DateTime applicationDate, Money amountAppliedFor, string county)
+        public BursaryApplication(Guid applicationId, string applicantFullName, string applicantPhoneNumber, string emailAddress, string admissionNumber, string nationalIdentificationNumber, string schoolName, string departmentName, string enrolledCourse, string yearOfStudy, string previousAcademicYearGrade, string sponsorshipType, string anyFormOfDisability, string applicationStatus, DateTime applicationDate, Money amountAppliedFor, string county,string batchNumber)
         {
 
             ApplicationId = applicationId;
@@ -87,6 +89,8 @@ namespace Domain.Aggregates
             AmountAppliedFor = amountAppliedFor;
 
             County = county;
+
+            BatchNumber = batchNumber;
 
             var bursaryAppliedEvent = new BursaryApplicationCreatedEvent(
 
@@ -127,7 +131,7 @@ namespace Domain.Aggregates
 
         }
 
-        public static BursaryApplication CreateNewBursaryApplication(Guid applicationId, string applicantFullName,string applicantPhoneNumber, string emailAddress, string admissionNumber, string nationalIdentificationNumber, string schoolName, string departmentName, string enrolledCourse, string yearOfStudy, string previousAcademicYearGrade, string sponsorshipType, string anyFormOfDisability, string applicationStatus, DateTime applicationDate, Money amountAppliedFor, string county)
+        public static BursaryApplication CreateNewBursaryApplication(Guid applicationId, string applicantFullName,string applicantPhoneNumber, string emailAddress, string admissionNumber, string nationalIdentificationNumber, string schoolName, string departmentName, string enrolledCourse, string yearOfStudy, string previousAcademicYearGrade, string sponsorshipType, string anyFormOfDisability, string applicationStatus, DateTime applicationDate, Money amountAppliedFor, string county,string batchNumber)
         {
             return new BursaryApplication(
 
@@ -163,7 +167,9 @@ namespace Domain.Aggregates
 
                 amountAppliedFor,
                 
-                county
+                county,
+
+                batchNumber
              );
 
         }
@@ -178,13 +184,13 @@ namespace Domain.Aggregates
 
                     break;
 
-                case BursaryApplicationApprovedEvent e:
+                case BursaryApprovalCreatedEvent e:
 
                     ApplyBursaryApplicationApprovedEvent(e);
 
                     break;
 
-                case BursaryApplicationRejectedEvent e:
+                case BursaryApprovalRejectedEvent e:
 
                     ApplyBursaryApplicationRejectedEvent(e);
 
@@ -229,6 +235,8 @@ namespace Domain.Aggregates
             AmountAppliedFor = e.AmountAppliedFor;
 
             County = e.County;
+
+            BatchNumber = e.BatchNumber;
         }
         public void ApplyBursaryApplicationUpdatedEvent(BursaryApplicationUpdatedEvent e)
         {
@@ -263,12 +271,14 @@ namespace Domain.Aggregates
 
             if (!string.IsNullOrEmpty(e.County)) County = e.County;
 
+            if (!string.IsNullOrEmpty(e.BatchNumber)) BatchNumber = e.BatchNumber;
+
         }
-        public void ApplyBursaryApplicationApprovedEvent(BursaryApplicationApprovedEvent e)
+        public void ApplyBursaryApplicationApprovedEvent(BursaryApprovalCreatedEvent e)
         {
             ApplicationStatus = "Approved";
         }
-        public void ApplyBursaryApplicationRejectedEvent(BursaryApplicationRejectedEvent e)
+        public void ApplyBursaryApplicationRejectedEvent(BursaryApprovalRejectedEvent e)
         {
             ApplicationStatus = "Rejected";
         }

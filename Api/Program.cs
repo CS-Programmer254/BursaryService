@@ -8,22 +8,21 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
-
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite("Data Source=BursaryApplicationServiceDb.db"));
 
+//builder.Services.AddDbContext<AppDbContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IBursaryRepository,BursaryRepository>();
+builder.Services.AddScoped<IBursaryApprovalRepository,BursaryApprovalRepository>();
 builder.Services.AddScoped<IFamilyStatusRepository,FamilyStatusRepository>();
 builder.Services.AddScoped<IFeeBalanceRepository,FeeBalanceRepository>();
 builder.Services.AddScoped<IFinancialSponsorshipRepository,FinancialSponsorshipRepository>();
 builder.Services.AddScoped<IParentRepository,ParentRepository>();
 builder.Services.AddScoped<IBursaryApprovalStatusRepository,BursaryApprovalStatusRepository>();
-builder.Services.AddScoped<IBursaryService, BursaryService>();
-
-builder.Services.AddControllers();
-
+builder.Services.AddScoped<IBursaryApplicationService, BursaryApplicationService>();
+builder.Services.AddScoped<IBursaryApprovalService, BursaryApprovalService>();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(CreateBursaryApplicationCommandHandler)));
 
@@ -33,8 +32,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(ty
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(GetBursaryApplicationByIdQueryHandler)));
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(GetBursaryApplicationByPhoneNumberQueryHandler)));
-
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(GetBursaryApplicationsByPhoneNumberQueryHandler)));
+builder.Services.AddGrpc();
 
 
 // Add services to the container.
@@ -44,6 +43,19 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(ty
 //    o.Address = new Uri("http://localhost:9090");
 //});
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173") 
+                  .AllowAnyMethod() 
+                  .AllowAnyHeader() 
+                  .AllowCredentials();
+        });
+});
+
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -52,12 +64,11 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    dbContext.Database.Migrate();
-}
-
+//using (var scope = app.Services.CreateScope())
+//{
+//    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+//    dbContext.Database.Migrate();
+//}
 
 
 if (app.Environment.IsDevelopment())
@@ -67,8 +78,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
+app.UseRouting();  
+app.UseCors("AllowReactApp");  
+app.UseAuthorization(); 
 
 app.MapControllers();
 

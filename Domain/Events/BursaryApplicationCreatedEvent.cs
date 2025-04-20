@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Domain.Events
 {
     public record BursaryApplicationCreatedEvent(
-        
+
         Guid ApplicationId,
 
         string ApplicantFullName,
@@ -36,14 +36,15 @@ namespace Domain.Events
         string AnyFormOfDisability,
 
         string ApplicationStatus,
-        
+
         DateTime ApplicationDate,
 
         Money AmountAppliedFor,
 
         string County
 
-        ):IDomainEvent;
-       
-    
+        ) : IDomainEvent
+    {
+        internal string BatchNumber;
+    }
 }

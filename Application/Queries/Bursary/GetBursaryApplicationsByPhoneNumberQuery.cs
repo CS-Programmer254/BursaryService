@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Application.Queries.Bursary
 {
-   public record GetBursaryApplicationByPhoneNumberQuery(string PhoneNumber) : IRequest<GetBursaryApplicationResponseDto?>;
+   public record GetBursaryApplicationsByPhoneNumberQuery(string PhoneNumber) : IRequest<IEnumerable<GetBursaryApplicationResponseDto?>>;
 }

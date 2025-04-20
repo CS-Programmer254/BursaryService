@@ -13,16 +13,16 @@ namespace Application.Handlers.CommandHandlers.Bursary
 {
     public class CreateBursaryApplicationCommandHandler : IRequestHandler<CreateBursaryApplicationCommand, bool>
     {
-        private readonly IBursaryService _bursaryService;
+        private readonly IBursaryApplicationService _bursaryApplicationService;
 
-        public CreateBursaryApplicationCommandHandler(IBursaryService bursaryService)
+        public CreateBursaryApplicationCommandHandler(IBursaryApplicationService bursaryApplicationService)
         {
-            _bursaryService = bursaryService ?? throw new ArgumentNullException(nameof(bursaryService));
+            _bursaryApplicationService = bursaryApplicationService ?? throw new ArgumentNullException(nameof(bursaryApplicationService));
         }
 
         public async Task<bool> Handle(CreateBursaryApplicationCommand request, CancellationToken cancellationToken)
         {
-            return await _bursaryService.SaveBursaryApplicationAsync(Guid.NewGuid(),request);
+            return await _bursaryApplicationService.SaveBursaryApplicationAsync(Guid.NewGuid(),request);
         }
     }
 

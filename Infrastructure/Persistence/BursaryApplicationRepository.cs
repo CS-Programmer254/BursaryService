@@ -63,6 +63,7 @@ namespace Infrastructure.Persistence
             return await _context.BursaryApplications.Where(b => b.ApplicantPhoneNumber == phoneNumber).ToListAsync();
         }
 
+
         public async Task<IEnumerable<BursaryApplication>> GetAllBursaryApplicationsByStatusAsync(string status)
         {
             return await _context.BursaryApplications.Where(b => b.ApplicationStatus == status).ToListAsync();

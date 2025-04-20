@@ -3,7 +3,6 @@ using System;
 using Domain.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -16,83 +15,76 @@ namespace Domain.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.13")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.13");
 
             modelBuilder.Entity("Domain.Aggregates.BursaryApplication", b =>
                 {
                     b.Property<Guid>("ApplicationId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("AdmissionNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("AmountAppliedFor")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("AnyFormOfDisability")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ApplicantFullName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ApplicantPhoneNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("ApplicationDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ApplicationStatus")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("BatchNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("County")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("DepartmentName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("EmailAddress")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("EnrolledCourse")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("NationalIdentificationNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("PreviousAcademicYearGrade")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("SchoolName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("SponsorshipType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("YearOfStudy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("ApplicationId");
 
@@ -101,27 +93,78 @@ namespace Domain.Migrations
                     b.ToTable("BursaryApplications", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Aggregates.BursaryApproval", b =>
+                {
+                    b.Property<Guid>("ApprovalId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ApprovalStatus")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ApprovedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ApproverEmailAddress")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ApproverFullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ApproverNationalIdentificationNumber")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ApproverPhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AssignedBatchNumber")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("BursaryApplicationId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Remark")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ApprovalId");
+
+                    b.HasIndex("BursaryApplicationId")
+                        .IsUnique();
+
+                    b.ToTable("BursaryApprovals", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Aggregates.FamilyStatus", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("AdmissionNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsOrphan")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsSingleParent")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("NumberOfSiblings")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("NumberOfSiblingsInInstitutionOfHigherLearning")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -132,15 +175,12 @@ namespace Domain.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("AdmissionNumber")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<decimal>("CurrentBalance")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -153,25 +193,22 @@ namespace Domain.Migrations
                 {
                     b.Property<Guid>("FinancialSponsorshipEntryId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("AdmissionNumber")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<decimal>("AmountFunded")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("AwardingOrganization")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("SponsorshipType")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("FinancialSponsorshipEntryId");
 
@@ -184,10 +221,10 @@ namespace Domain.Migrations
                 {
                     b.Property<Guid>("BursaryApprovalStatusId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("BursaryApprovalStatusName")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("BursaryApprovalStatusId");
 
@@ -198,42 +235,195 @@ namespace Domain.Migrations
                 {
                     b.Property<Guid>("ParentId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("BursaryApplicantAdmissionNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("EmploymentStatus")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsDisabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("MiddleName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("NationalIdentificationNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("RelationshipWithBursaryApplicant")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("ParentId");
 
                     b.ToTable("Parents");
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.BursaryApplication", b =>
+                {
+                    b.OwnsOne("Domain.ValueObjects.Money", "AmountAppliedFor", b1 =>
+                        {
+                            b1.Property<Guid>("BursaryApplicationApplicationId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("TEXT")
+                                .HasColumnName("AmountAppliedFor");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("TEXT")
+                                .HasColumnName("AmountAppliedFor_Currency");
+
+                            b1.HasKey("BursaryApplicationApplicationId");
+
+                            b1.ToTable("BursaryApplications");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BursaryApplicationApplicationId");
+                        });
+
+                    b.Navigation("AmountAppliedFor")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.BursaryApproval", b =>
+                {
+                    b.HasOne("Domain.Aggregates.BursaryApplication", "BursaryApplication")
+                        .WithOne("BursaryApproval")
+                        .HasForeignKey("Domain.Aggregates.BursaryApproval", "BursaryApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Domain.ValueObjects.Money", "AmountAllocated", b1 =>
+                        {
+                            b1.Property<Guid>("BursaryApprovalApprovalId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("TEXT")
+                                .HasColumnName("AmountAllocated");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("TEXT")
+                                .HasColumnName("AmountAllocated_Currency");
+
+                            b1.HasKey("BursaryApprovalApprovalId");
+
+                            b1.ToTable("BursaryApprovals");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BursaryApprovalApprovalId");
+                        });
+
+                    b.OwnsOne("Domain.ValueObjects.Money", "AmountAppliedFor", b1 =>
+                        {
+                            b1.Property<Guid>("BursaryApprovalApprovalId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("TEXT")
+                                .HasColumnName("AmountAppliedFor");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("TEXT")
+                                .HasColumnName("AmountAppliedFor_Currency");
+
+                            b1.HasKey("BursaryApprovalApprovalId");
+
+                            b1.ToTable("BursaryApprovals");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BursaryApprovalApprovalId");
+                        });
+
+                    b.Navigation("AmountAllocated")
+                        .IsRequired();
+
+                    b.Navigation("AmountAppliedFor")
+                        .IsRequired();
+
+                    b.Navigation("BursaryApplication");
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.FeeBalance", b =>
+                {
+                    b.OwnsOne("Domain.ValueObjects.Money", "CurrentBalance", b1 =>
+                        {
+                            b1.Property<Guid>("FeeBalanceId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("TEXT")
+                                .HasColumnName("FeeBalance_CurrentBalance");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("TEXT")
+                                .HasColumnName("FeeBalance_Currency");
+
+                            b1.HasKey("FeeBalanceId");
+
+                            b1.ToTable("FeeBalances");
+
+                            b1.WithOwner()
+                                .HasForeignKey("FeeBalanceId");
+                        });
+
+                    b.Navigation("CurrentBalance")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.FinancialSponsorship", b =>
+                {
+                    b.OwnsOne("Domain.ValueObjects.Money", "AmountFunded", b1 =>
+                        {
+                            b1.Property<Guid>("FinancialSponsorshipEntryId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("TEXT")
+                                .HasColumnName("AmountFunded");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("TEXT")
+                                .HasColumnName("AmountFunded_Currency");
+
+                            b1.HasKey("FinancialSponsorshipEntryId");
+
+                            b1.ToTable("FinancialSponsorships");
+
+                            b1.WithOwner()
+                                .HasForeignKey("FinancialSponsorshipEntryId");
+                        });
+
+                    b.Navigation("AmountFunded")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.BursaryApplication", b =>
+                {
+                    b.Navigation("BursaryApproval")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
